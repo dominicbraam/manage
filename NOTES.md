@@ -3,5 +3,8 @@
 # Objectives
 Create tasks
 Allow tasks to have duration (add time onto existing time), subtasks
-Store data in JSON - by day?
+Use MySQL Database to store data.
 Read data and output filtered info.
+
+# Database
+
