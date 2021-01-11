@@ -8,3 +8,23 @@ Read data and output filtered info.
 
 # Database
 
+
+# To-do
+Let a new table be created for each year
+Add status: "recurring"
+
+
+# Tasks Table
+Columns: tasID, task, subtask, duration, date stamp, status, task list
+
+
+ALTER TABLE ReferencingTable DROP 
+   CONSTRAINT fk__ReferencingTable__MainTable;
+
+ALTER TABLE ReferencingTable ADD 
+   CONSTRAINT fk__ReferencingTable__MainTable 
+      FOREIGN KEY (pk_col_1)
+      REFERENCES MainTable (pk_col_1)
+      ON DELETE CASCADE ON UPDATE CASCADE;
+
+	  *can add update cascade
