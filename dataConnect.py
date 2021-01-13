@@ -1,5 +1,8 @@
+import os
 import mysql.connector
 from mysql.connector import errorcode
+
+os.system("mysql.server start")
 
 try:
     db = mysql.connector.connect(
@@ -17,3 +20,5 @@ except mysql.connector.Error as err:
     else:
         print(err)
 
+def mysqlStop():
+    os.system("mysql.server stop")

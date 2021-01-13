@@ -1,7 +1,9 @@
 import menu
 
 promptNew = "[NEW]"
-promptForTaskList = "Enter task list: "
+promptForTaskList = "Task list: "
+promptForTask = "Task: "
+promptForSubtask = "Subask: "
 promptForChoice = "Choice: "
 promptListExists = "List already exists."
 promptListCreated = "Task list created successfully."
@@ -23,27 +25,19 @@ def getChoice():
     userInput = input(promptForChoice)
     return userInput
 
-def getTaskList():
-    userInput = input(promptForTaskList)
-    if len(userInput) > 50:
-        print("Task list name too long. Try again.")
-        return getTaskList()
-    else:
-        return userInput
-
-def getTask():
-    userInput = input("Task: ")
-    if len(userInput) > 100:
-        print("Task name too long. Try again.")
-        return getTask()
-    else:
-        return userInput
-
-def getSubtask():
-    userInput = input("Subask: ")
-    if len(userInput) > 100:
-        print("Subtask name too long. Try again.")
-        return getSubtask()
+def getName(tableName):
+    if tableName == "tasks_list":
+        userInput = input(promptForTaskList)
+    elif tableName == "main_tasks":
+        userInput = input(promptForTask)
+    elif tableName == "subtasks_2021":
+        userInput = input(promptForSubtask)
+    if tableName == "subtasks_2021" and len(userInput) > 50:
+        print("Name too long. Try again.")
+        return getName(tableName)
+    elif len(userInput) > 100:
+        print("Name too long. Try again.")
+        return getName(tableName)
     else:
         return userInput
 

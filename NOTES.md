@@ -28,3 +28,10 @@ ALTER TABLE ReferencingTable ADD
       ON DELETE CASCADE ON UPDATE CASCADE;
 
 	  *can add update cascade
+
+# To reset primary keys
+SET @count = 0;
+
+UPDATE `user`  SET `user_id` = @count:= @count + 1;
+
+ALTER TABLE `user_id` AUTO_INCREMENT = 1;
