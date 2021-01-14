@@ -2,6 +2,7 @@ from dataConnect import cursor
 from dataConnect import db
 import uInput
 import menu
+import time
 
 def getIDName(tableName):
     if tableName == "tasks_list":
@@ -147,6 +148,10 @@ def createItem(tableName,itemID_parent):
     menu.back()
 
 def deleteItem(tableName,itemID_parent,itemNum):
+    if itemNum == -1:
+        return
+    elif tableName=="tasks_list" and itemNum == 0:
+        return
     if itemID_parent==None:
         itemID = itemNum
     else:
@@ -167,6 +172,10 @@ def deleteItem(tableName,itemID_parent,itemNum):
     menu.back()
 
 def renameItem(tableName,itemID_parent,itemNum):
+    if itemNum == -1:
+        return
+    elif tableName=="tasks_list" and itemNum == 0:
+        return
     if itemID_parent==None:
         itemID=itemNum
     else:
@@ -182,3 +191,41 @@ def renameItem(tableName,itemID_parent,itemNum):
     else:
         cursor.execute("UPDATE {tableName} SET {columnName} = \"{newItemName}\" WHERE {idName} = \"{itemID}\"".format(tableName=tableName,columnName=columnName,newItemName=newItemName,idName=idName,itemID=itemID))
         db.commit()
+
+def updateItem(tableName,columnName,itemUpdate,idName,itemID):
+    cursor.execute("UPDATE {tableName} SET {columnName} = \"{itemUpdate}\" WHERE {idName} = \"{itemID}\"".format(tableName=tableName,columnName=columnName,itemUpdate=itemUpdate,idName=idName,itemID=itemID))
+    db.commit()
+
+def modifySubtask(tableName,itemID_parent,itemNum):
+    if itemNum == -1:
+        return
+    itemID = getItemID(tableName,itemID_parent,itemNum)
+    idName = getIDName(tableName)
+    itemName = getItemName(tableName,itemID)
+
+    modifySubtask_menu_exit = False
+    while not modifySubtask_menu_exit:
+        modify_menu = menu.modifySubtask(itemName)
+        menu_sel = modify_menu.show()
+
+        if menu_sel == 0:
+            print(uInput.promptNew)
+            renameItem(tableName,itemID_parent,itemNum)
+        elif menu_sel == 1:
+            print(uInput.promptNew)
+            duration = uInput.getDuration()
+            updateItem(tableName,"duration",duration,idName,itemID)
+        elif menu_sel == 2:
+            print(uInput.promptNew)
+            date = uInput.getDate(0) 
+            updateItem(tableName,"timestamp",date,idName,itemID)
+        elif menu_sel == 3:
+            print(uInput.promptNew)
+            status = uInput.getStatus()
+            updateItem(tableName,"status",status,idName,itemID)
+        elif menu_sel == 4:
+            print(uInput.promptNew)
+            duedate = uInput.getDue()
+            updateItem(tableName,"duedate",duedate,idName,itemID)
+        elif menu_sel == 5:
+            modifySubtask_menu_exit = True

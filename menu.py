@@ -54,7 +54,7 @@ def subtasks(option,tableName_parent,itemID_parent):
         menu_items = ["[1] Create subtask", "[0] Back"]
     elif option == 1:
         menu_title = "Menu - {itemName_parent}\n".format(itemName_parent=itemName_parent)
-        menu_items = ["[1] Show subtasks", "[2] Something subtask", "[3] Create subtask", "[4] Modify subtask","[5] Delete subtask","[0] Back"]
+        menu_items = ["[1] Show subtasks", "[2] Add log for...", "[3] Create subtask", "[4] Modify subtask","[5] Delete subtask","[0] Back"]
 
     menu = TerminalMenu(menu_entries=menu_items,
                              title=menu_title,
@@ -86,6 +86,8 @@ def selectItem(tableName,itemID_parent):
         menu_title = "Tasks:\n"
     elif tableName == "subtasks_2021":
         menu_title = "Subtasks:\n"
+    elif tableName == "tasks_list":
+        menu_title = "Categories:\n"
     selectItem_menu = TerminalMenu(menu_entries=items,
                                    title=menu_title,
                                    cycle_cursor=True,
@@ -120,9 +122,11 @@ def getDue():
                                cycle_cursor=True)
     return getDue_menu
 
-def modifySubtask(subtask):
-    print("Modifying \"" + subtask + "\"")
-    print("1: Change name.")
-    print("2: Change duration.")
-    print("3: Change status.")
-    print("0: cancel")
+def modifySubtask(name):
+    modify_items = ["[1] Change name.", "[2] Change duration.", "[3] Change date.", "[4] Change status.", "[5] Change due date.","[0] Back."]
+    menu_title = "Modifying {name}...\n".format(name=name)
+    modify_menu = TerminalMenu(menu_entries=modify_items,
+                               title=menu_title,
+                               cycle_cursor=True,
+                               clear_screen=True)
+    return modify_menu

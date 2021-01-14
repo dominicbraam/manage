@@ -106,7 +106,7 @@ def openSubtasks(tableName,itemID_parent,tableName_parent):
                 dbTable.createItem(tableName,itemID_parent)
             elif menu_sel == 3:
                 index = menu.selectItem(tableName,itemID_parent)
-                dbTable.renameItem(tableName,itemID_parent,index)
+                dbTable.modifySubtask(tableName,itemID_parent,index)
             elif menu_sel == 4:
                 index = menu.selectItem(tableName,itemID_parent)
                 dbTable.deleteItem(tableName,itemID_parent,index)
