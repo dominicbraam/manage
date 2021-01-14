@@ -63,16 +63,18 @@ def open(tableName,itemID_parent,tableName_parent):
             if menu_sel == 0:
                 dbTable.showNames(tableName,itemID_parent)
             elif menu_sel == 1:
-                index = menu.selectItem(tableName,itemID_parent)
-                openSubtasks("subtasks_2021",index+1,"main_tasks")
+                itemNum = menu.selectItem(tableName,itemID_parent)
+                index = dbTable.getItemID(tableName,itemID_parent,itemNum)
+                print(index)
+                openSubtasks("subtasks_2021",index,"main_tasks")
             elif menu_sel == 2:
                 dbTable.createItem(tableName,itemID_parent)
             elif menu_sel == 3:
                 index = menu.selectItem(tableName,itemID_parent)
-                dbTable.renameItem(tableName,itemID_parent,index+1)
+                dbTable.renameItem(tableName,itemID_parent,index)
             elif menu_sel == 4:
                 index = menu.selectItem(tableName,itemID_parent)
-                dbTable.deleteItem(tableName,itemID_parent,index+1)
+                dbTable.deleteItem(tableName,itemID_parent,index)
             elif menu_sel == 5:
                 menu_exit = True
 
@@ -104,13 +106,12 @@ def openSubtasks(tableName,itemID_parent,tableName_parent):
                 dbTable.createItem(tableName,itemID_parent)
             elif menu_sel == 3:
                 index = menu.selectItem(tableName,itemID_parent)
-                dbTable.renameItem(tableName,itemID_parent,index+1)
+                dbTable.renameItem(tableName,itemID_parent,index)
             elif menu_sel == 4:
                 index = menu.selectItem(tableName,itemID_parent)
-                dbTable.deleteItem(tableName,itemID_parent,index+1)
+                dbTable.deleteItem(tableName,itemID_parent,index)
             elif menu_sel == 5:
                 menu_exit = True
-
 
 if __name__ == "__main__":
     main()

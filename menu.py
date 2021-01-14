@@ -96,19 +96,29 @@ def selectItem(tableName,itemID_parent):
     else:
         return menu_sel
 
-def openSubtasks(task):
-    print("Menu - " + task)
-    print("1: Show subtasks.")
-    print("3: Create subtask.")
-    print("4: Modify subtask.")
-    print("5: Delete subtask.")
-    print("0: back")
+def getStatus():
+    status_items = ["[1] Up Next", "[2] In Progress", "[3] Completed", "[4] Recurring"]
+    menu_title = "Status:"
+    get_status_menu = TerminalMenu(menu_entries=status_items,
+                                   title=menu_title,
+                                   cycle_cursor=True)
+    return get_status_menu    
 
-def openSubtasksNone(task):
-    print("Menu - " + task)
-    print("No subtasks exist...")
-    print("1: Create subtask.")
-    print("0: back")
+def getDate():
+    date_menu_items = ["[1] Now", "[2] Custom"]
+    menu_title = "Date:"
+    date_menu = TerminalMenu(menu_entries=date_menu_items,
+                             title=menu_title,
+                             cycle_cursor=True)
+    return date_menu
+
+def getDue():
+    getDue_menu_items = ["[1] No", "[2] Yes"]
+    menu_title = "Due Date?"
+    getDue_menu = TerminalMenu(menu_entries=getDue_menu_items,
+                               title=menu_title,
+                               cycle_cursor=True)
+    return getDue_menu
 
 def modifySubtask(subtask):
     print("Modifying \"" + subtask + "\"")
@@ -116,9 +126,3 @@ def modifySubtask(subtask):
     print("2: Change duration.")
     print("3: Change status.")
     print("0: cancel")
-
-def chooseStatus():
-    print("1: Up Next")
-    print("2: In Progress")
-    print("3: Completed")
-    print("4: Recurring")

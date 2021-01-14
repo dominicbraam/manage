@@ -52,7 +52,7 @@ def getItemID(tableName,itemID_parent,selectNum):
     idName_parent = getParentIDName(tableName)
     cursor.execute("SELECT * FROM {tableName} WHERE {idName_parent} = \"{itemID_parent}\"".format(tableName=tableName,idName_parent=idName_parent,itemID_parent=itemID_parent))
     selectNum = int(selectNum)
-    count = 1
+    count = 0
     for x in cursor:
         if count == selectNum:
             return x[0]
@@ -139,14 +139,14 @@ def createItem(tableName,itemID_parent):
         elif tableName=="subtasks_2021":
             duration = uInput.getDuration()
             status = uInput.getStatus()
-            cursor.execute("INSERT INTO subtasks_2021 ({idName_parent},{columnName},duration,timestamp,status) VALUES (\"{itemID_parent}\",\"{item}\",{duration},now(),\"{status}\")".format(idName_parent=idName_parent,columnName=columnName,itemID_parent=itemID_parent,item=item,duration=duration,status=status))
+            date = uInput.getDate(0)
+            duedate = uInput.getDue()
+            cursor.execute("INSERT INTO {tableName} ({idName_parent},{columnName},duration,timestamp,status,duedate) VALUES (\"{itemID_parent}\",\"{item}\",{duration},\"{date}\",\"{status}\",\"{duedate}\")".format(tableName=tableName,idName_parent=idName_parent,columnName=columnName,itemID_parent=itemID_parent,item=item,duration=duration,date=date,status=status,duedate=duedate))
         db.commit()
         print("Item successfully created.")
     menu.back()
 
 def deleteItem(tableName,itemID_parent,itemNum):
-    if itemNum == 0:
-        return
     if itemID_parent==None:
         itemID = itemNum
     else:
@@ -167,8 +167,6 @@ def deleteItem(tableName,itemID_parent,itemNum):
     menu.back()
 
 def renameItem(tableName,itemID_parent,itemNum):
-    if itemNum == 0:
-        return
     if itemID_parent==None:
         itemID=itemNum
     else:
