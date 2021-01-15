@@ -47,7 +47,7 @@ def getName(tableName):
         print("Not a valid name. Try again.")
         return getName(tableName)
     else:
-        if tableName == "subtasks_2021" and len(userInput) > 50:
+        if tableName == "tasks_list" and len(userInput) > 50:
             print("Name too long. Try again.")
             return getName(tableName)
         elif len(userInput) > 100:

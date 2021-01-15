@@ -2,7 +2,7 @@ from dataConnect import cursor
 from dataConnect import db
 import uInput
 import menu
-import time
+import datetime
 
 def getIDName(tableName):
     if tableName == "tasks_list":
@@ -61,6 +61,14 @@ def getItemID(tableName,itemID_parent,selectNum):
             count+=1
     return 0
 
+def getItemIDByName(tableName,itemID_parent,name):
+    idName_parent = getParentIDName(tableName)
+    idName = getIDName(tableName)
+    columnName = getColumnName(tableName)
+    cursor.execute("SELECT {idName} FROM {tableName} WHERE {idName_parent} = \"{itemID_parent}\" AND {columnName} = \"{name}\"".format(idName=idName,tableName=tableName,idName_parent=idName_parent,itemID_parent=itemID_parent,name=name,columnName=columnName))
+    result = cursor.fetchone()
+    return result[0]
+
 def getItemName(tableName,itemID):
     idName = getIDName(tableName)
     columnName = getColumnName(tableName)
@@ -98,17 +106,13 @@ def itemExists(tableName,itemID,itemID_parent):
 
 def getItemsForMenu(tableName,itemID_parent):
     columnName = getColumnName(tableName)
+    idName = getIDName(tableName)
     idName_parent = getParentIDName(tableName)
     if itemID_parent==None:
-        cursor.execute("SELECT {columnName} FROM {tableName}".format(columnName=columnName,tableName=tableName))
+        cursor.execute("SELECT {idName}, {columnName} FROM {tableName}".format(idName=idName,columnName=columnName,tableName=tableName))
     else:
-        cursor.execute("SELECT {columnName} FROM {tableName} WHERE {idName_parent} = \"{itemID_parent}\"".format(columnName=columnName,idName_parent=idName_parent,tableName=tableName,itemID_parent=itemID_parent))
-    count = 0
-    items = []
-    for x in cursor:
-        itemNum = count+1
-        items.append("[{itemNum}] {x}".format(itemNum=itemNum,x=x[0]))
-        count+=1
+        cursor.execute("SELECT * FROM {tableName} WHERE {idName_parent} = \"{itemID_parent}\"".format(idName=idName,columnName=columnName,idName_parent=idName_parent,tableName=tableName,itemID_parent=itemID_parent))
+    items = cursor.fetchall()
     return items
 
 def itemExistsByName(tableName,itemID_parent,name):
@@ -124,11 +128,11 @@ def itemExistsByName(tableName,itemID_parent,name):
     else:
         return False
 
-def createItem(tableName,itemID_parent):
+def createItem(tableName,itemID_parent,allowDup):
     print(uInput.promptNew)
     item = uInput.getName(tableName)
 
-    if itemExistsByName(tableName,itemID_parent,item):
+    if itemExistsByName(tableName,itemID_parent,item) and allowDup==False:
         print("Item already exists.")
     else:
         idName_parent = getParentIDName(tableName)
@@ -139,8 +143,8 @@ def createItem(tableName,itemID_parent):
             cursor.execute("INSERT INTO {tableName} ({columnName},{idName_parent}) VALUES (\"{item}\",\"{itemID_parent}\")".format(tableName=tableName,columnName=columnName,idName_parent=idName_parent,item=item,itemID_parent=itemID_parent))
         elif tableName=="subtasks_2021":
             duration = uInput.getDuration()
-            status = uInput.getStatus()
             date = uInput.getDate(0)
+            status = uInput.getStatus()
             duedate = uInput.getDue()
             cursor.execute("INSERT INTO {tableName} ({idName_parent},{columnName},duration,timestamp,status,duedate) VALUES (\"{itemID_parent}\",\"{item}\",{duration},\"{date}\",\"{status}\",\"{duedate}\")".format(tableName=tableName,idName_parent=idName_parent,columnName=columnName,itemID_parent=itemID_parent,item=item,duration=duration,date=date,status=status,duedate=duedate))
         db.commit()
@@ -180,13 +184,18 @@ def renameItem(tableName,itemID_parent,itemNum):
         itemID=itemNum
     else:
         itemID=getItemID(tableName,itemID_parent,itemNum)
+    oldName = getItemName(tableName,itemID)
     idName = getIDName(tableName)
+    idName_parent = getParentIDName(tableName)
     columnName = getColumnName(tableName)
 
     print(uInput.promptNew)
     newItemName = uInput.getName(tableName)
 
-    if itemExistsByName(tableName,itemID_parent,newItemName):
+    if tableName == "subtasks_2021":
+        cursor.execute("UPDATE {tableName} SET {columnName} = \"{newItemName}\" WHERE {idName_parent} = \"{itemID_parent}\" AND {columnName} = \"{oldName}\"".format(tableName=tableName,columnName=columnName,newItemName=newItemName,oldName=oldName,idName_parent=idName_parent,itemID_parent=itemID_parent))
+        db.commit()
+    elif itemExistsByName(tableName,itemID_parent,newItemName):
         print(uInput.promptTaskExists)
     else:
         cursor.execute("UPDATE {tableName} SET {columnName} = \"{newItemName}\" WHERE {idName} = \"{itemID}\"".format(tableName=tableName,columnName=columnName,newItemName=newItemName,idName=idName,itemID=itemID))
@@ -229,3 +238,26 @@ def modifySubtask(tableName,itemID_parent,itemNum):
             updateItem(tableName,"duedate",duedate,idName,itemID)
         elif menu_sel == 5:
             modifySubtask_menu_exit = True
+
+def addLogWithRef(tableName,itemID_parent,index):
+    if index == -1:
+        return
+    idName_parent = getParentIDName(tableName)
+    columnName = getColumnName(tableName)
+    
+    item = getItemName(tableName,index)
+    duration = uInput.getDuration()
+    date = uInput.getDate(0)
+    status = uInput.getStatus()
+    duedate = uInput.getDue()
+    cursor.execute("INSERT INTO {tableName} ({idName_parent},{columnName},duration,timestamp,status,duedate) VALUES (\"{itemID_parent}\",\"{item}\",{duration},\"{date}\",\"{status}\",\"{duedate}\")".format(tableName=tableName,idName_parent=idName_parent,columnName=columnName,itemID_parent=itemID_parent,item=item,duration=duration,date=date,status=status,duedate=duedate))
+    db.commit()
+    print("Item successfully created.")
+    menu.back()
+
+def hasDue(date):
+    noDue = datetime.datetime(1,1,1)
+    if date==noDue:
+        return False
+    else:
+        return True

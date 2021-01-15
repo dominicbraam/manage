@@ -1,13 +1,25 @@
 from simple_term_menu import TerminalMenu
 import dbTable
 
+class design:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = "\033[1m"
+    UNDERLINE = '\033[4m'
+    END = "\033[0m"
+
 def main(option):
     # 0 = empty, 1 = has items
     main_menu_cursor = "> "
     main_menu_cursor_style = ("fg_red", "bold")
 
     if option == 0:
-        main_menu_title = "Main Menu\nNo data exists..."
+        main_menu_title =  "{BOLD}Main Menu{END}\nNo data exists...".format(BOLD=design.BOLD,END=design.END)
         main_menu_items = ["[1] Create task list", "[0] Quit"]
     elif option == 1:
         main_menu_title = "Main Menu\n"
@@ -42,6 +54,7 @@ def tasks(option,tableName_parent,itemID_parent):
                              cycle_cursor=True,
                              clear_screen=True)
     return menu
+
 def subtasks(option,tableName_parent,itemID_parent):
     itemName_parent = dbTable.getItemName(tableName_parent,itemID_parent)
     # 0 = empty, 1 = has items
@@ -77,9 +90,31 @@ def back():
 
     return back_menu
 
-def selectItem(tableName,itemID_parent):
+def noDupSubtasks(itemList):
+    return list(set(i[1] for i in itemList))
+
+def selectItem(tableName,itemID_parent,dup):
     items = dbTable.getItemsForMenu(tableName,itemID_parent)
-    items.append("[0] back") 
+    if not dup:
+        items = noDupSubtasks(items)
+
+    menu_items = []
+    count = 1
+    if dup and tableName=="subtasks_2021":
+        for x in items:
+            menu_items.append("[{count}] {itemName} - {duration} mins - Due: {duedate} - Logged: {timestamp}".format(count=count,itemName=x[1],duration=x[2], duedate=x[6],timestamp=x[3]))
+            count+=1
+    elif dup:
+        for x in items:
+            menu_items.append("[{count}] {itemName}".format(count=count,itemName=x[1]))
+            count+=1
+    
+    else:
+        for x in items:
+            menu_items.append("[{count}] {itemName}".format(count=count,itemName=x))
+            count+=1
+
+    menu_items.append("[0] back") 
 
     menu_title = "Menu\n"
     if tableName == "main_tasks":
@@ -88,13 +123,16 @@ def selectItem(tableName,itemID_parent):
         menu_title = "Subtasks:\n"
     elif tableName == "tasks_list":
         menu_title = "Categories:\n"
-    selectItem_menu = TerminalMenu(menu_entries=items,
+    selectItem_menu = TerminalMenu(menu_entries=menu_items,
                                    title=menu_title,
                                    cycle_cursor=True,
                                    clear_screen=True)
     menu_sel = selectItem_menu.show()
-    if menu_sel == len(items)-1:
+    if menu_sel == len(items):
         return -1
+    elif not dup:
+        index = dbTable.getItemIDByName(tableName,itemID_parent,items[menu_sel])
+        return index
     else:
         return menu_sel
 
