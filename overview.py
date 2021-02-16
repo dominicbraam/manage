@@ -13,30 +13,33 @@ def all(tableName,itemID_parent):
         print(menu.design.BOLD + menu.design.UNDERLINE + x[1] + menu.design.END)
         cursor.execute("SELECT DISTINCT subtask FROM subtasks_2021 WHERE taskID = \"{x}\"".format(x=x[0]))
         subtaskNames = [row[0] for row in cursor.fetchall()]
-        subtasks =[] 
+        subtasks =[]
         inProgress = []
         upNext = []
         completed = []
-        storeDuration = []
         for i in subtaskNames:
-            duration =0 
+            duration = 0
             cursor.execute("SELECT subtask, status, duedate, timestamp, duration FROM subtasks_2021 WHERE subtask = \"{i}\" ORDER BY timestamp DESC".format(i=i))
             getSimilar = cursor.fetchall()
             for t in getSimilar:
                 duration=t[4] + duration
             item = getSimilar[0]
+            item = item + (duration,)
             if item[1]=="In Progress":
                 inProgress.append(item)
             elif item[1]=="Up Next":
                 upNext.append(item)
             elif item[1]=="Completed":
                 completed.append(item)
-            storeDuration.append(duration)
+
+            inProgress.reverse()
+            upNext.reverse()
+            completed.reverse()
 
         subtasksFormatted = []
         item = ()
-        colour ="" 
-        dueDate = datetime.datetime(1,1,1) 
+        colour =""
+        dueDate = datetime.datetime(1,1,1)
 
         for a in inProgress:
             subtasks.append(a)
@@ -62,12 +65,12 @@ def all(tableName,itemID_parent):
             else:
                 dueDate = None
 
-            formattedDuration = round(storeDuration[countY]/60,2)
+            formattedDuration = round(y[5]/60,2)
 
             item = (itemName,"[{duration} hrs]".format(duration=formattedDuration),"[{colour}{status}{end}]".format(colour=colour,status=y[1],end=menu.design.END), "Due: {dueDate}".format(dueDate=dueDate))
             subtasksFormatted.append(item)
             countY+=1
-            
+
         print(tabulate(subtasksFormatted, tablefmt='plain'))
         print("\n")
     menu.back()
