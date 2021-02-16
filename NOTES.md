@@ -1,20 +1,20 @@
-## Program to manage tasks
+# Program to manage tasks
 
-# Objectives
+## Objectives
 Create tasks
 Allow tasks to have duration (add time onto existing time), subtasks
 Use MySQL Database to store data.
 Read data and output filtered info.
 
-# Database
+## Database
 
 
-# To-do
+## To-do
 Let a new table be created for each year
 Add status: "recurring"
 
 
-# Tasks Table
+## Tasks Table
 Columns: tasID, task, subtask, duration, date stamp, status, task list
 
 
@@ -29,7 +29,7 @@ ALTER TABLE ReferencingTable ADD
 
 	  *can add update cascade
 
-# To reset primary keys
+## To reset primary keys
 SET @count = 0;
 
 UPDATE `user`  SET `user_id` = @count:= @count + 1;
